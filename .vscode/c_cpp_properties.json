@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:\\Users\\KuanYing\\Documents\\Arduino\\libraries\\Adafruit_SSD1306",
+                "C:\\Users\\KuanYing\\Documents\\Arduino\\libraries\\Adafruit_GFX_Library",
+                "C:\\Users\\KuanYing\\Documents\\Arduino\\libraries\\SparkFun_MLX90614_Arduino_Library-master\\src",
+                "C:\\Program Files (x86)\\Arduino\\tools\\**",
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\**"
+            ],
+            "forcedInclude": [
+                "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h"
+            ],
+            "intelliSenseMode": "msvc-x64"
+        }
+    ],
+    "version": 4
+}
