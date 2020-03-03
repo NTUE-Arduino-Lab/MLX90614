@@ -1,65 +1,57 @@
-#include <Wire.h> 
-#include <SparkFunMLX90614.h> 
+/* This code works with MLX90614 (GY906) and OLED screen
+ * It measures both ambient and object temperature in Fahrenheit and display it on the screen
+ * Please visit www.surtrtech.com for more details
+ */
 
-#include <SPI.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
+#include <Wire.h>
+#include <Adafruit_MLX90614.h>
 
-// If using software SPI (the default case):
-#define OLED_MOSI   9
-#define OLED_CLK   10
-#define OLED_DC    11
-#define OLED_CS    12
-#define OLED_RESET 13
-Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 32 // OLED display height, in pixels
+#define OLED_RESET    -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 
-IRTherm therm;
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); //Declaring the display name (display)
+Adafruit_MLX90614 mlx = Adafruit_MLX90614();
 
-void setup() 
-{
-  Serial.begin(9600); 
-  therm.begin(); 
-  therm.setUnit(TEMP_C); 
-
-   display.begin(SSD1306_SWITCHCAPVCC);
-   display.clearDisplay();
-   display.setRotation(2);
-  
-}
-
-String temperature; 
-char runner;
-
-void loop() 
-{
-  if (therm.read()) // On success, read() will return 1, on fail 0.
-  {
-    temperature = String(therm.object(), 2);
-    Serial.print("Object: ");
-    Serial.print(temperature); Serial.println("C");
-    display.clearDisplay();
-    runner++;
-    delay(5);
-  }
-
-  display.setTextSize(2);
-  display.setTextColor(WHITE);
-  display.setCursor(display.width()/4,display.height()/12);
-  
-  if (therm.object()>=100)
-  display.setCursor(display.width()/4,display.height()/12);
-  
-  display.println(temperature);
-
-  display.drawLine(display.width()/runner,display.height() - display.height()/2.5, display.width()/runner+1, display.height() - display.height()/2.5, WHITE);
-
-  display.setCursor(0,display.height()-display.height()/4);
-  display.setTextSize(1);
-  display.println("   Arduino Thermlgun");
-  display.setCursor(display.width()- display.width()/4,display.height()/12);
-  display.println("deg C");
+void setup() {  
+  mlx.begin(); 
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); //Start the OLED display
+  display.clearDisplay();
   display.display();
 
-  if (runner>20)
-  runner=0;
+}
+
+void loop() {
+  display.clearDisplay();
+  
+  display.setTextSize(1);                    
+  display.setTextColor(WHITE);             
+  display.setCursor(0,4);                
+  display.println("Ambient"); 
+  
+  display.setTextSize(2);
+  display.setCursor(50,0);
+  display.println(mlx.readAmbientTempC(),1);
+ 
+  display.setCursor(110,0);
+  display.println("C");
+  
+  display.setTextSize(1);                    
+  display.setTextColor(WHITE);             
+  display.setCursor(0,20);                
+  display.println("Target"); 
+  
+  display.setTextSize(2);
+  display.setCursor(50,17);
+  display.println(mlx.readObjectTempC(),1);
+  
+  display.setCursor(110,17);
+  display.println("C");
+  
+  display.display();
+  
+  delay(1000);
+
 }
